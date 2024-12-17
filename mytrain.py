@@ -12,8 +12,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from PIL import Image
 
-df_train = pd.read_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/train.csv')
-df_test = pd.read_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/test.csv')
+df_train = pd.read_csv(r'D:\Learning\GitHub\Distance-Estimator\train.csv')
+df_test = pd.read_csv(r'D:\Learning\GitHub\Distance-Estimator\test.csv')
 X_train = df_train[['xmin', 'ymin', 'xmax', 'ymax']].values
 y_train = df_train[['zloc']].values
 
@@ -24,7 +24,6 @@ outliers = (y_train < (z_mean - 3 * z_std)) | (y_train > (z_mean + 3 * z_std))
 
 # Flatten the mask if y_train is a 2D array
 outliers = outliers.flatten()
-
 # Filter out rows in X_train and y_train based on the outliers mask
 X_train_filtered = X_train[~outliers]
 y_train_filtered = y_train[~outliers]
@@ -79,8 +78,8 @@ transform = transforms.Compose([
 ])
 
 # Assuming you have a list of image file paths
-image_paths_train = "D:/Learning/GitHub/KITTI-distance-estimation/original_data/train_images"  # Load your training image paths
-image_paths_test = "D:/Learning/GitHub/KITTI-distance-estimation/original_data/test_images"  # Load your test image paths
+image_paths_train = "D:/Learning/GitHub/Distance-Estimation/original_data/train_images"  # Load your training image paths
+image_paths_test = "D:/Learning/GitHub/Distance-Estimation/original_data/test_images"  # Load your test image paths
 
 # Create datasets for training and testing
 train_dataset = CustomDataset(X_train, y_train)
@@ -138,7 +137,7 @@ print(f"Test Loss: {total_loss/len(test_loader):.4f}")
 
 
 print(f"Now making predictions on the test set...")
-df_test = pd.read_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/test.csv')
+df_test = pd.read_csv(r'D:\Learning\GitHub\Distance-Estimator\test.csv')
 X_test = df_test[['xmin', 'ymin', 'xmax', 'ymax']].values
 y_test = df_test[['zloc']].values  # True values for comparison
 X_scaler = joblib.load('X_scaler.pkl')
@@ -151,7 +150,7 @@ with torch.no_grad():
 y_pred = y_scaler.inverse_transform(y_pred.reshape(-1, 1)).flatten()
 y_test = y_scaler.inverse_transform(y_test.reshape(-1, 1)).flatten()
 df_test['zloc_pred'] = y_pred
-df_test.to_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/predictions_simple_nn.csv', index=False)
+df_test.to_csv('D:/Learning/GitHub/Distance-Estimator/data/predictions_simple_nn.csv', index=False)
 
 print("Predictions saved to 'data/predictions_simple_nn.csv'")
 ###########################################################################################
@@ -160,8 +159,8 @@ print("Loading the Random Forest model")
 from sklearn.ensemble import RandomForestRegressor
 
 # Assuming you have your data loaded and split
-df_train = pd.read_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/train.csv')
-df_test = pd.read_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/test.csv')
+df_train = pd.read_csv(r'D:\Learning\GitHub\Distance-Estimator\train.csv')
+df_test = pd.read_csv(r'D:\Learning\GitHub\Distance-Estimator\test.csv')
 
 X_train = df_train[['xmin', 'ymin', 'xmax', 'ymax']].values
 y_train = df_train['zloc'].values
@@ -186,7 +185,7 @@ print(f"RMSE: {rmse:.2f}")
 print(f"R2 Score: {r2:.2f}")
 
 print(f"Now making predictions on the test set...")
-df_test = pd.read_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/test.csv')
+df_test = pd.read_csv(r'D:\Learning\GitHub\Distance-Estimator\test.csv')
 X_test = df_test[['xmin', 'ymin', 'xmax', 'ymax']].values
 y_test = df_test[['zloc']].values  # True values for comparison
 y_pred = rf_model.predict(X_test)
@@ -201,5 +200,5 @@ else:
 print("Final predictions:", y_pred[:10])
 df_test['zloc_pred'] = y_pred
 # Save to CSV
-df_test.to_csv('D:/Learning/GitHub/KITTI-distance-estimation/distance-estimator/data/predictions_random_forest.csv', index=False)
+df_test.to_csv('D:/Learning/GitHub/Distance-Estimator/data/predictions_random_forest.csv', index=False)
 print("Predictions saved to 'data/predictions_random_forest.csv'")

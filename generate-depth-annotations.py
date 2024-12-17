@@ -16,7 +16,6 @@ pbar = tqdm(total=new_df.shape[0], position=1)
 for idx, row in new_df.iterrows():
     pbar.update(1)
     file_path = os.path.exists(os.path.join("original_data/train_annots", row['filename']))
-    print(f"Checking file: {file_path}")  # Debugging file existence
     if os.path.exists(file_path):
         result_df.at[idx, 'filename'] = row['filename']
 
