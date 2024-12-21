@@ -3,7 +3,7 @@ import torch.nn as nn
 from sklearn.preprocessing import StandardScaler
 import joblib
 import pandas as pd
-
+import sys
 # Define your SimpleNN model class (if it’s not imported)
 class SimpleNN(nn.Module):
     def __init__(self):
@@ -24,13 +24,16 @@ class SimpleNN(nn.Module):
 model = SimpleNN()
 model.load_state_dict(torch.load('model/simple_nn_model.pth'))
 model.eval()
-
+xmin = int(sys.argv[1])
+ymin = int(sys.argv[2])
+xmax = int(sys.argv[3])
+ymax = int(sys.argv[4])
 # Load scalers
 X_scaler = joblib.load('X_scaler.pkl')
 y_scaler = joblib.load('y_scaler.pkl')
 
 # Single sample input
-sample = pd.DataFrame([[633, 155, 704, 211]], columns=['xmin', 'ymin', 'xmax', 'ymax'])
+sample = pd.DataFrame([[xmin,ymin,xmax,ymax]], columns=['xmin', 'ymin', 'xmax', 'ymax'])
 
 # Preprocess the sample
 sample_scaled = X_scaler.transform(sample)
