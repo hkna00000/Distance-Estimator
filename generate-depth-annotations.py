@@ -39,5 +39,5 @@ mask = np.random.rand(len(result_df)) < 0.9
 train = result_df[mask]
 test = result_df[~mask]
 
-train.to_csv('train.csv', index=False)
-test.to_csv('test.csv', index=False)
+train.to_csv('data/train.csv', index=False)
+test.to_csv('data/test.csv', index=False)
