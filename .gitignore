@@ -94,3 +94,4 @@ ENV/
 *.pkl
 .idea/
 original_data/
+classification_annotations/
