@@ -1,6 +1,7 @@
 # Distance Estimator
  This is the model to predict the distance from your camera to the object
 ## Purpose
+
 To estimate distance to objects (cars, pedestrians, trucks) in the scene on the basis of detection information
 
 ## Overview
@@ -17,23 +18,23 @@ To train and test the models, execute the following from `distance-estimator` di
 
 ### Inference
 1. Use `mypredict.py` to generate predictions for the test set.
-```
-python inference.py --modelname=generated_files/model@1535470106.json --weights=generated_files/model@1535470106.h5
-```
 2. Use `visualizer.py` to visualize the predictions.
 ```
 cd KITTI-distance-estimation/
 python prediction-visualizer.py
 ```
-
+### App Implementing
+1. Run the image_api to start creating an api for frontend and backend link
+```
+python image_api.py
+```
+2. Run ModalAppBackend.py to call the backend
+```
+python ModalAppBackend.py
+```
+3. Run the ModelAppFrontend.html to use the app
 ### Results
-![](results/0.jpg)
-![](results/1.jpg)
-![](results/2.jpg)
-![](results/3.jpg)
-![](results/4.jpg)
-![](results/5.jpg)
-
+![](GithubInstance\001.png)
 ## Appendix
 ### Prepare Data
 1. **Download KITTI dataset**
