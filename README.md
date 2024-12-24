@@ -34,7 +34,7 @@ python ModalAppBackend.py
 ```
 3. Run the ModelAppFrontend.html to use the app
 ### Results
-![](GithubInstance/001.png)
+![](GithubInstance/000.png)
 ## Appendix
 ### Prepare Data
 1. **Download KITTI dataset**
