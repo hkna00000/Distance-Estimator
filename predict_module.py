@@ -33,16 +33,14 @@ class DistanceModel(nn.Module):
 class ClassificationModel(nn.Module):
     def __init__(self, input_dim, num_classes):
         super(ClassificationModel, self).__init__()
+        # Define layers
         self.fc1 = nn.Linear(input_dim, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, num_classes)
-        self.dropout = nn.Dropout(0.5)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(512, num_classes)
 
     def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.relu(self.fc1(x))
+        x = self.fc2(x)
         return x
     
 # Load the Distance Prediction Model
@@ -55,7 +53,7 @@ resnet = models.resnet18(pretrained=True)
 resnet.fc = nn.Linear(resnet.fc.in_features, 2048)
 resnet.eval()
 classification_model = ClassificationModel(input_dim=2048, num_classes=8)
-classification_model.load_state_dict(torch.load("model/simple_nn_classi.pth", map_location=torch.device('cpu')))
+classification_model.load_state_dict(torch.load("model/resnetmodel.pth", map_location=torch.device('cpu')))
 classification_model.eval()
 
 # Load the scalers and label encoder
