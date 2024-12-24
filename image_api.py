@@ -29,60 +29,38 @@ async def process_image(data: ImageData):
 
         # Crop the image based on the bounding box
         bbox = data.bbox
-        cropped_img = img.crop((bbox.xmin, bbox.ymin, bbox.xmax, bbox.ymax))
 
-        # Process the cropped image (e.g., passing it to your model)
-        result = process_model(cropped_img, bbox)
+        # Process the image (e.g., passing it to your model)
+        result = process_model(img,bbox)
 
-        # Log the result to make sure it’s correct before sending back
-        print(f"Processed result: {result}")
-
-        return {"result": result}  # This should return a JSON response with the "result"
+        return {"result": result}
     except Exception as e:
-        print(f"Error: {e}")  # Log the error to the terminal
-        return {"error": str(e)}  # Return error as a JSON response
+        return {"error": str(e)}
 
 def process_model(img, bbox):
     xmin, ymin, xmax, ymax = bbox.xmin, bbox.ymin, bbox.xmax, bbox.ymax
     try:
         print(f"Processing image with bounding box: {xmin}, {ymin}, {xmax}, {ymax}")
         # Save the cropped image to a temporary file
-        # with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_img_file:
-        #     img.save(temp_img_file, format='PNG')
-        #     temp_img_path = temp_img_file.name
-        #     print(f"Temporary image file created at: {temp_img_path}")
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as temp_img_file:
+            img.save(temp_img_file, format='PNG')
+            temp_img_path = temp_img_file.name
+            print(f"Temporary image file created at: {temp_img_path}")
         
         # Run the classification script with the image and bounding box coordinates
-        result1 = subprocess.run(
-            ["python", "predict_module.py", str(xmin), str(ymin), str(xmax), str(ymax)],
+        result = subprocess.run(
+            ["python", "predict_module.py", temp_img_path, str(xmin), str(ymin), str(xmax), str(ymax)],
             capture_output=True,
-            text=True
+            text=True,
         )
-        
-        if result1.returncode != 0:
-            return f"Error in predict module: {result1.stderr.strip()}"
-
-        output1 = result1.stdout.strip()
-        print(f"Distance module: {output1}")
+        if result.returncode != 0:
+            return f"Error in script: {result.stderr.strip()}"   
+        output1 = result.stdout.strip()
+        return output1
                  
-        # # Run the classification script with the cropped image path
-        # result2 = subprocess.run(
-        #     ["python", "classi_module.py", temp_img_path, str(xmin), str(ymin), str(xmax), str(ymax)],
-        #     capture_output=True,
-        #     text=True,            
-        # )
-        # if result2.returncode != 0:
-        #     return f"Error in classi_module.py: {result2.stderr.strip()}"
-        # # Capture the output from the second script
-        # output2 = result2.stdout.strip()
-        # print(f"Classify module: {output2}")
-        # # Cleanup the temporary image file
-        # if os.path.exists(temp_img_path):
-        #     os.remove(temp_img_path)
-        # return output2
     except Exception as e:
-        return str(e)
-
+        print(f"Error: {e}")
+        return {"error": str(e)}
 
 if __name__ == "__main__":
     import uvicorn
