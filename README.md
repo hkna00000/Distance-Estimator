@@ -62,7 +62,7 @@ KITTI-distance-estimation
 We only have train_annots. Put all information in the .txts in a .csv
 
 ```shell
-python generate-csv.py --input=original_data/train_annots --output=annotations.csv
+python generate-csv.py --input=original_data/train_annots --output=annotations1.csv
 ```
 
 The annotations contain the following information
@@ -89,7 +89,7 @@ Values    Name      Description
 ```
 
 3. **Generate dataset for distance estimation**<br/>
-Using only `annotations.csv` (file generated using `train_annots`), split the dataset into `train.csv` and `test.csv` set.
+Using only `annotations1.csv` (file generated using `train_annots`), split the dataset into `train.csv` and `test.csv` set.
 
 ```shell
 python generate-depth-annotations.py
