@@ -31,8 +31,8 @@ X_scaler = StandardScaler()
 y_scaler = StandardScaler()
 X_train = X_scaler.fit_transform(X_train)
 y_train = y_scaler.fit_transform(y_train)
-joblib.dump(X_scaler, 'X_scaler.pkl')
-joblib.dump(y_scaler, 'y_scaler.pkl')
+joblib.dump(X_scaler, 'scaler/X_scaler.pkl')
+joblib.dump(y_scaler, 'scaler/y_scaler.pkl')
 class SimpleNN(nn.Module):
     def __init__(self):
         super(SimpleNN, self).__init__()
@@ -140,8 +140,8 @@ print(f"Now making predictions on the test set...")
 df_test = pd.read_csv('data/test.csv')
 X_test = df_test[['xmin', 'ymin', 'xmax', 'ymax']].values
 y_test = df_test[['zloc']].values  # True values for comparison
-X_scaler = joblib.load('X_scaler.pkl')
-y_scaler = joblib.load('y_scaler.pkl')
+X_scaler = joblib.load('scaler/X_scaler.pkl')
+y_scaler = joblib.load('scaler/y_scaler.pkl')
 X_test = X_scaler.fit_transform(X_test)
 X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
 with torch.no_grad():

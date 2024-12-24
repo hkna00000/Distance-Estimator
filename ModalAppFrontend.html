@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bounding Box Drawing</title>
+</head>
+<body>
+    <input type="file" id="imageInput" onchange="loadImage(event)">
+    <canvas id="canvas" width="600" height="400" style="border: 1px solid black;"></canvas>
+    <button onclick="submitData()">Submit</button>
+    <p id="result"></p>
+
+    <script>
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        let img = new Image();
+        let startX, startY, endX, endY;
+        let drawing = false;
+
+        function loadImage(event) {
+            img.src = URL.createObjectURL(event.target.files[0]);
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            startX = e.offsetX;
+            startY = e.offsetY;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (drawing) {
+                endX = e.offsetX;
+                endY = e.offsetY;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'red';
+                ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+        });
+    function getCroppedImage(startX, startY, endX, endY) {
+        let tempCanvas = document.createElement('canvas');
+        let tempCtx = tempCanvas.getContext('2d');
+        let width = endX - startX;
+        let height = endY - startY;
+        tempCanvas.width = width;
+        tempCanvas.height = height;
+        tempCtx.drawImage(canvas, startX, startY, width, height, 0, 0, width, height);
+        return tempCanvas;
+    }
+
+    function submitData() {
+    if (startX === undefined || startY === undefined || endX === undefined || endY === undefined) {
+        alert("Please draw a bounding box before submitting!");
+        return;
+    }
+    console.log("startX:", startX, "startY:", startY, "endX:", endX, "endY:", endY);
+    let bbox = { xmin: startX, ymin: startY, xmax: endX, ymax: endY };
+    console.log("Bounding Box:", bbox); // Debug log
+
+    let croppedImage = getCroppedImage(startX, startY, endX, endY);
+    let imageBase64 = croppedImage.toDataURL("image/png");
+
+    fetch('http://127.0.0.1:5000/process', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ bbox: bbox, image: imageBase64 })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('result').innerText = 'Processed result: ' + data.result;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    
+}
+
+    </script>
+</body>
+</html>
