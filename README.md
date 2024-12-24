@@ -8,7 +8,7 @@ To estimate distance to objects (cars, pedestrians, trucks) in the scene on the 
 Train a deep learning model that takes in bounding box coordinates of the detected object and estimates distance to the object.
 
 Input: bounding box coordinates (xmin, ymin, xmax, ymax) <br/>
-Output: distance (z)
+Output: distance (z) and object label (Car, Van, Truck, Pedestrian, Misc, Cyclist, Person_sitting)
 
 ## Usage
 To train and test the models, execute the following from `distance-estimator` directory, unless mentioned otherwise
