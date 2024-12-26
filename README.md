@@ -11,8 +11,10 @@ Input: bounding box coordinates (xmin, ymin, xmax, ymax) <br/>
 Output: distance (z) and object label (Car, Van, Truck, Pedestrian, Misc, Cyclist, Person_sitting)
 
 ## Usage
-To train and test the models, execute the following from `distance-estimator` directory, unless mentioned otherwise
-
+- To train and test the models, execute the following from `distance-estimator` directory, unless mentioned otherwise
+- While training, you can use the new_classification.ipynb notebook to try predicting with your model and tuning
+- The predict_module.py is an important file in which you can choose your model for predicting module and classifying module integrating in-app.
+- The mypredict.py file is the visualization of your result on test file from your model, modify the result directory before using.
 ### Training
 1. Use `mytrain.py` to define your own model, choose hyperparameters, and start training!
 
