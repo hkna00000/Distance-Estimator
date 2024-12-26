@@ -97,3 +97,6 @@ original_data/
 classification_annotations/
 classification_annotation/features.csv
 classification_annotation/labels.csv
+new_classification.ipynb
+model/best.pt
+runs/

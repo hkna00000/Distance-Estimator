@@ -56,8 +56,21 @@ def process_model(img, bbox):
         if result.returncode != 0:
             return f"Error in script: {result.stderr.strip()}"   
         output1 = result.stdout.strip()
-        return output1
-                 
+        # Use a regex to filter out unnecessary lines (modify based on your output format)
+        # Process and clean the output
+        print(f"Raw Output: {output1}")  # Debugging: View raw output
+
+        # Exclude lines with "image" or "Speed" but keep detections
+        filtered_output = "\n".join(
+            line for line in output1.splitlines()
+            if not any(kw in line for kw in ["image", "Speed", "ms"])  # Adjust keywords to match unwanted logs
+        )
+
+        # Ensure we return something meaningful
+        return filtered_output if filtered_output else "No detections found."
+
+        
+              
     except Exception as e:
         print(f"Error: {e}")
         return {"error": str(e)}

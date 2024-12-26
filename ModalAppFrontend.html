@@ -1,27 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bounding Box Drawing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #canvas {
+            border: 2px dashed #ccc;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-    <input type="file" id="imageInput" onchange="loadImage(event)">
-    <canvas id="canvas" width="600" height="400" style="border: 1px solid black;"></canvas>
-    <button onclick="submitData()">Submit</button>
-    <p id="result"></p>
+    <div class="container">
+        <h1>Draw Bounding Box on Image</h1>
+        <input type="file" id="imageInput" onchange="loadImage(event)">
+        <canvas id="canvas" width="600" height="400"></canvas>
+        <div class="button-container">
+            <button onclick="submitData()">Submit Bounding Box</button>
+        </div>
+        <p id="result"></p>
+    </div>
 
     <script>
         let canvas = document.getElementById('canvas');
         let ctx = canvas.getContext('2d');
         let img = new Image();
+        let originalImageBase64 = "";
         let startX, startY, endX, endY;
         let drawing = false;
 
         function loadImage(event) {
-            img.src = URL.createObjectURL(event.target.files[0]);
-            img.onload = function() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                originalImageBase64 = e.target.result; // Save the full image as base64
+                img.src = e.target.result;
+                img.onload = function () {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
             };
+            reader.readAsDataURL(file);
         }
 
         canvas.addEventListener('mousedown', (e) => {
@@ -36,7 +118,8 @@
                 endY = e.offsetY;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                ctx.strokeStyle = 'red';
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 2;
                 ctx.strokeRect(startX, startY, endX - startX, endY - startY);
             }
         });
@@ -44,46 +127,37 @@
         canvas.addEventListener('mouseup', () => {
             drawing = false;
         });
-    function getCroppedImage(startX, startY, endX, endY) {
-        let tempCanvas = document.createElement('canvas');
-        let tempCtx = tempCanvas.getContext('2d');
-        let width = endX - startX;
-        let height = endY - startY;
-        tempCanvas.width = width;
-        tempCanvas.height = height;
-        tempCtx.drawImage(canvas, startX, startY, width, height, 0, 0, width, height);
-        return tempCanvas;
-    }
 
-    function submitData() {
-    if (startX === undefined || startY === undefined || endX === undefined || endY === undefined) {
-        alert("Please draw a bounding box before submitting!");
-        return;
-    }
-    console.log("startX:", startX, "startY:", startY, "endX:", endX, "endY:", endY);
-    let bbox = { xmin: startX, ymin: startY, xmax: endX, ymax: endY };
-    console.log("Bounding Box:", bbox); // Debug log
+        function submitData() {
+            if (startX === undefined || startY === undefined || endX === undefined || endY === undefined) {
+                alert("Please draw a bounding box before submitting!");
+                return;
+            }
 
-    let croppedImage = getCroppedImage(startX, startY, endX, endY);
-    let imageBase64 = croppedImage.toDataURL("image/png");
+            // Calculate the bounding box coordinates
+            const bbox = {
+                xmin: Math.min(startX, endX),
+                ymin: Math.min(startY, endY),
+                xmax: Math.max(startX, endX),
+                ymax: Math.max(startY, endY),
+            };
 
-    fetch('http://127.0.0.1:5000/process', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ bbox: bbox, image: imageBase64 })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('result').innerText = 'Processed result: ' + data.result;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-    
-}
-
+            // Send the full image and bounding box to the backend
+            fetch('http://127.0.0.1:5000/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ bbox: bbox, image: originalImageBase64 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = 'Processed result: ' + data.result;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     </script>
 </body>
 </html>
