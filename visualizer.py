@@ -6,7 +6,7 @@ import cv2
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv(r"D:\Learning\GitHub\KITTI-distance-estimation\distance-estimator\data\train.csv")
+df = pd.read_csv(r"data\train.csv")
 
 for idx, row in df.iterrows():
     # Define file path first

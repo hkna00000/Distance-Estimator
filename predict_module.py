@@ -19,23 +19,36 @@ warnings.filterwarnings("ignore")
 class DistanceModel(nn.Module):
     def __init__(self):
         super(DistanceModel, self).__init__()
-        self.backbone = models.vgg16(pretrained=True)
-        for param in self.backbone.parameters():
-            param.requires_grad = False  # Freeze backbone
-        self.backbone.classifier = nn.Sequential(
-            nn.Linear(25088, 128),
+        # Load pretrained MobileNetV2 and freeze its feature extractor
+        self.backbone = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.IMAGENET1K_V1)
+        for param in self.backbone.features.parameters():
+            param.requires_grad = False
+        
+        # Replace MobileNetV2 classifier with Identity
+        num_features = self.backbone.last_channel
+        self.backbone.classifier = nn.Identity()
+        
+        # Define a custom regressor for regression task
+        self.regressor = nn.Sequential(
+            nn.Linear(num_features, 128),  # Input size matches MobileNetV2's output
             nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(128, 1)
+            nn.Linear(128, 1)              # Output a single value for regression
         )
     
     def forward(self, x):
-        return self.backbone(x)
+        # Pass input through MobileNetV2 feature extractor
+        x = self.backbone.features(x)
+        x = nn.functional.adaptive_avg_pool2d(x, (1, 1))  # Ensure output is (batch_size, num_features, 1, 1)
+        x = torch.flatten(x, 1)  # Flatten to (batch_size, num_features)
+        x = self.regressor(x)    # Pass through regressor
+        return x
+
 # Define the Classification Model (SimpleNN)
 classify_model = YOLO('model/best.pt')
 # Load the Distance Prediction Model
 distance_model = DistanceModel()
-distance_model.load_state_dict(torch.load('model/zloc_predictor.pth', map_location=torch.device('cpu')))
+distance_model.load_state_dict(torch.load('model\mobilevnet2.pth', map_location=torch.device('cpu')))
 distance_model.eval()
 
 
