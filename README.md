@@ -1,5 +1,19 @@
-# Distance Estimator
- This is the model to predict the distance from your camera to the object
+<!-- Banner -->
+<p align="center">
+  <a href="https://www.uit.edu.vn/" title="Trường Đại học Công nghệ Thông tin" style="border: none;">
+    <img src="https://i.imgur.com/WmMnSRt.png" alt="Trường Đại học Công nghệ Thông tin | University of Information Technology">
+  </a>
+</p>
+
+
+## THÀNH VIÊN NHÓM
+| STT    | MSSV          | Họ và Tên              |Chức Vụ    | Github                                                  | Email                   |
+| ------ |:-------------:| ----------------------:|----------:|--------------------------------------------------------:|-------------------------:
+| 1      | 21520560      | Hoàng Kim Ngọc Anh     |Nhóm trưởng|[hkna00000](https://github.com/hkna00000)                |21520560@gm.uit.edu.vn   |
+| 2      | 21520787      | Trần Khánh Duy         |Thành viên |                                                         |21520787@gm.uit.edu.vn   |
+
+## Distance Estimator
+ This is the model to predict the distance from your camera to the object and which type of object in side bounding box that user has chosen
 ## Purpose
 
 To estimate distance to objects (cars, pedestrians, trucks) in the scene on the basis of detection information
@@ -11,8 +25,10 @@ Input: bounding box coordinates (xmin, ymin, xmax, ymax) <br/>
 Output: distance (z) and object label (Car, Van, Truck, Pedestrian, Misc, Cyclist, Person_sitting)
 
 ## Usage
-To train and test the models, execute the following from `distance-estimator` directory, unless mentioned otherwise
-
+- To train and test the models, execute the following from `distance-estimator` directory, unless mentioned otherwise
+- While training, you can use the new_classification.ipynb notebook to try predicting with your model and tuning
+- The predict_module.py is an important file in which you can choose your model for predicting module and classifying module integrating in-app.
+- The mypredict.py file is the visualization of your result on test file from your model, modify the result directory before using.
 ### Training
 1. Use `mytrain.py` to define your own model, choose hyperparameters, and start training!
 
