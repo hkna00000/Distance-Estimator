@@ -10,6 +10,7 @@
 | STT    | MSSV          | Họ và Tên              |Chức Vụ    | Github                                                  | Email                   |
 | ------ |:-------------:| ----------------------:|----------:|--------------------------------------------------------:|-------------------------:
 | 1      | 21520560      | Hoàng Kim Ngọc Anh     |Nhóm trưởng|[hkna00000](https://github.com/hkna00000)                |21520560@gm.uit.edu.vn   |
+| 2      | 2152787       | Trần Khánh Duy         |Thành viên |                                                         |21520560@gm.uit.edu.vn   |
 
 ## Distance Estimator
  This is the model to predict the distance from your camera to the object and which type of object in side bounding box that user has chosen
